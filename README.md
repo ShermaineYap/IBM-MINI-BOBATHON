@@ -65,6 +65,10 @@ See [`BOB_LOG.md`](BOB_LOG.md) for the full prompt-by-prompt log. In short:
 
 Lessons: Plan mode first saved rework; giving Bob one scoped step at a time was far more reliable than "build everything"; asking Bob to keep existing tests green kept the refactor safe.
 
+## UI
+
+Light/dark-aware single page with a two-column layout (sticky form + results). Illustrations and the 9 scheme icons are inline SVG, so no external assets and it works offline.
+
 ## Roadmap
 
 - Bahasa Melayu / Mandarin / Tamil UI
