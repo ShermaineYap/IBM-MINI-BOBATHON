@@ -59,6 +59,7 @@ See [`BOB_LOG.md`](BOB_LOG.md) for the full prompt-by-prompt log. In short:
 | Stage | Bob mode | What Bob did |
 |---|---|---|
 | Design | **Plan** | Wrote [`bantuan-checker-plan.md`](bantuan-checker-plan.md): file structure, rules data model, `/api/check` contract, 5 sub-tasks. Asked two clarifying questions — matching strictness (→ two tiers) and how to handle Zakat without collecting religion (→ optional religion field). |
+| Design | **Agent + `impeccable` skill** | Redesigned the UI (Malaysian-civic look, two-tier cards, dark mode, responsive), then ran the skill's design checker and fixed what it flagged. I caught a hidden-reason bug in the browser and Bob fixed it. |
 | Build | **Agent** | Switched itself from Plan to Agent mode, tracked a 7-item todo list, extracted `engine.py`, implemented two-tier matching with reason strings, updated the API + UI, wrote `tests/test_engine.py`, ran `pytest`, **caught its own failing test** (wrong eBelia expectation), fixed it and removed a duplicate test — ending at 16/16 green. |
 
 

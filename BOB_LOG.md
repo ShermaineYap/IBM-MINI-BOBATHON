@@ -24,6 +24,15 @@ Output: [`bantuan-checker-plan.md`](bantuan-checker-plan.md) — overview, file 
 - Ran `pytest`: **1 failure**. Bob diagnosed it itself — a 17-year-old fails eBelia branch 1 by exactly one condition, so "check" was correct and the *test expectation* was wrong. It fixed the test, re-ran (17 passed), then removed a now-duplicate test → **16/16 passing**.
 
 
+## 3. Agent mode + `impeccable` design skill — UI redesign
+**Prompt (summary):** Redesign `static/index.html` so it is polished and demo-ready; plain HTML/CSS/JS only; do not touch the API, engine or tests; hero header, grouped form, two-tier result cards with benefit pills, reasons, collapsible document checklists and apply links; responsive, dark mode, accessible, reduced-motion aware.
+
+**What Bob did:** Loaded its built-in `impeccable` design skill, ran the skill's context script on the page, chose a direction ("government notice remade as a living document": Malaysian red header, blue ink, amber accent, monospaced labels), rewrote the page, then ran the skill's `detect.mjs` checker, which flagged side-tab card borders. Bob replaced them with top borders and re-ran the checker (zero findings) and `pytest` (16/16).
+
+**Polish round (prompt):** Always show the Check reason; move the long benefit pill onto its own line; replace the floating "2026" badge with an "Indicative only" badge.
+
+**Human-in-the-loop catch:** Bob reported the reason as "always visible", but when I rendered the page in a browser it was still hidden. It sat inside `<details>` but outside `<summary>`, so it only showed once a card was expanded. I told Bob exactly why and it moved the reason into the summary with an "Almost:" prefix. I verified it in the browser afterwards. **Lesson:** always check AI-built UI in a real browser, not just the diff.
+
 ## Takeaways
 - Plan → Agent → Ask matched the workflow taught in the workshop.
 - Bob's clarifying question in Plan mode surfaced a product decision I hadn't considered.

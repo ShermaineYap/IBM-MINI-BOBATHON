@@ -1,113 +1,781 @@
 <!doctype html>
+<!-- THESIS: A civic eligibility assessor that reads like an official notice — authoritative and
+     precise — rather than a consumer app card grid. Refuses the blue-sidebar / rounded-card default.
+     OWN-WORLD: Deep near-black ground (#0f1117), off-white text (#f0eff0), Malaysian red (#cc0001)
+     as the single saturated accent, amber (#d97706) for caution. System sans-serif stack pushed hard
+     with weight and tracking. No rounded cards; ruled separators and tabular structure carry hierarchy.
+     STORY: Visitor fills one form, gets an assessed verdict — "Likely" in red, "Check" in amber —
+     with the single reason they fall short, documents to prepare, and a direct apply link.
+     FIRST VIEWPORT: Full-bleed header with product name and tagline at display scale, then the form
+     immediately below the fold-line on desktop (side-by-side with results pane at ≥800px).
+     FORM: Official-notice / tabular assessment sheet. Position 1 on my ordered list. Seed: n/a (no script).
+     FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md. -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bantuan Checker</title>
+<title>Bantuan Checker — Malaysian Aid Eligibility</title>
 <style>
-  :root{--bg:#f4f6fb;--card:#fff;--ink:#1a1f36;--muted:#5b6478;--brand:#0f62fe;--ok:#198038;--warn:#b45309;--line:#e0e4ee}
-  *{box-sizing:border-box}
-  body{margin:0;font-family:-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink)}
-  header{background:var(--brand);color:#fff;padding:20px 16px}
-  header h1{margin:0;font-size:1.4rem}
-  header p{margin:4px 0 0;opacity:.9;font-size:.9rem}
-  main{max-width:960px;margin:0 auto;padding:16px;display:grid;gap:16px;grid-template-columns:1fr}
-  @media(min-width:800px){main{grid-template-columns:360px 1fr}}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
-  label{display:block;font-size:.85rem;color:var(--muted);margin:10px 0 4px}
-  input,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;font-size:1rem}
-  button{margin-top:16px;width:100%;padding:12px;border:0;border-radius:8px;background:var(--brand);color:#fff;font-size:1rem;font-weight:600;cursor:pointer}
-  button:disabled{opacity:.6}
-  .section-head{font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:0 0 10px;padding:6px 10px;border-radius:6px}
-  .section-head.likely{color:var(--ok);background:#f0faf3}
-  .section-head.check{color:var(--warn);background:#fffbf0}
-  .scheme{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:12px}
-  .scheme.likely{border-left:4px solid var(--ok)}
-  .scheme.check{border-left:4px solid var(--warn)}
-  .scheme h3{margin:0 0 2px;font-size:1.05rem}
-  .scheme .agency{color:var(--muted);font-size:.8rem}
-  .scheme .benefit{font-weight:600;color:var(--ok);margin:6px 0}
-  .scheme .reason{font-size:.85rem;color:var(--warn);margin:6px 0;padding:6px 10px;background:#fffbf0;border-radius:6px}
-  .scheme ul{margin:6px 0 0;padding-left:18px;font-size:.9rem}
-  .scheme a{color:var(--brand);font-size:.85rem}
-  .muted{color:var(--muted);font-size:.85rem}
-  .empty{padding:40px 12px;text-align:center;color:var(--muted)}
-  .count{font-size:1.6rem;font-weight:700;color:var(--ok)}
-  details{margin-top:12px}
-  summary{cursor:pointer;color:var(--muted);font-size:.85rem}
+/* ─── Reset & Tokens ────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f1117;
+  --surface:#181c26;
+  --surface2:#1e2333;
+  --ink:#f0eff0;
+  --ink2:#9ba3b8;
+  --ink3:#5c6478;
+  --rule:#2a2f42;
+  --red:#cc0001;
+  --red-dim:#7a0001;
+  --amber:#d97706;
+  --amber-dim:#92500a;
+  --green:#16a34a;
+  --focus:#4f7fff;
+  --font:-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --mono:"Courier New",Courier,monospace;
+  --radius:4px;
+  --transition:180ms cubic-bezier(.4,0,.2,1);
+}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--font);
+  line-height:1.5;
+  min-height:100vh;
+}
+
+/* ─── Layout ────────────────────────────────────────────────────────────── */
+.page-header{
+  background:var(--red);
+  padding:28px 24px 24px;
+  position:relative;
+  overflow:hidden;
+}
+.page-header::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0,0,0,.08) 3px,
+    rgba(0,0,0,.08) 4px
+  );
+  pointer-events:none;
+}
+.header-inner{
+  max-width:1080px;
+  margin:0 auto;
+  display:flex;
+  align-items:baseline;
+  gap:16px;
+  flex-wrap:wrap;
+  position:relative;
+  z-index:1;
+}
+.logo-mark{
+  font-size:.72rem;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.6);
+  font-family:var(--mono);
+  white-space:nowrap;
+}
+.site-title{
+  font-size:clamp(1.6rem,4vw,2.4rem);
+  font-weight:800;
+  letter-spacing:-.035em;
+  color:#fff;
+  line-height:1.1;
+}
+.site-sub{
+  font-size:.875rem;
+  color:rgba(255,255,255,.75);
+  font-weight:400;
+  margin-top:6px;
+  letter-spacing:.005em;
+}
+.version-badge{
+  font-family:var(--mono);
+  font-size:.68rem;
+  color:rgba(255,255,255,.5);
+  border:1px solid rgba(255,255,255,.2);
+  padding:2px 8px;
+  border-radius:2px;
+  letter-spacing:.08em;
+  white-space:nowrap;
+  display:inline-block;
+  margin-top:8px;
+}
+
+.workspace{
+  max-width:1080px;
+  margin:0 auto;
+  padding:0 16px 48px;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:0;
+}
+@media(min-width:840px){
+  .workspace{
+    grid-template-columns:380px 1fr;
+    gap:0 1px;
+    align-items:start;
+  }
+}
+
+/* ─── Panel shared ──────────────────────────────────────────────────────── */
+.panel{
+  padding:28px 24px;
+}
+.panel+.panel{
+  border-top:1px solid var(--rule);
+}
+@media(min-width:840px){
+  .panel+.panel{
+    border-top:none;
+    border-left:1px solid var(--rule);
+  }
+}
+
+/* ─── Form Panel ────────────────────────────────────────────────────────── */
+.form-panel{
+  background:var(--surface);
+  position:sticky;
+  top:0;
+}
+.panel-label{
+  font-family:var(--mono);
+  font-size:.68rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--ink3);
+  margin-bottom:20px;
+  padding-bottom:10px;
+  border-bottom:1px solid var(--rule);
+}
+
+.field{margin-bottom:16px}
+.field:last-of-type{margin-bottom:0}
+.field-label{
+  display:block;
+  font-size:.78rem;
+  font-weight:600;
+  color:var(--ink2);
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  margin-bottom:5px;
+}
+.field input,.field select{
+  width:100%;
+  background:var(--bg);
+  border:1px solid var(--rule);
+  border-radius:var(--radius);
+  color:var(--ink);
+  font-family:var(--font);
+  font-size:.925rem;
+  padding:9px 11px;
+  outline:none;
+  transition:border-color var(--transition),box-shadow var(--transition);
+  appearance:none;
+  -webkit-appearance:none;
+}
+.field select{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%235c6478' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 11px center;
+  padding-right:30px;
+  cursor:pointer;
+}
+.field input:focus,.field select:focus{
+  border-color:var(--focus);
+  box-shadow:0 0 0 3px rgba(79,127,255,.18);
+}
+.field input[type="checkbox"]{
+  width:auto;
+  margin-right:8px;
+  accent-color:var(--red);
+}
+.checkbox-row{
+  display:flex;
+  align-items:center;
+  font-size:.875rem;
+  color:var(--ink2);
+  margin-top:4px;
+}
+.field-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.submit-btn{
+  margin-top:20px;
+  width:100%;
+  background:var(--red);
+  color:#fff;
+  border:none;
+  border-radius:var(--radius);
+  font-family:var(--font);
+  font-size:.95rem;
+  font-weight:700;
+  letter-spacing:.02em;
+  padding:13px 16px;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+  transition:background var(--transition),transform var(--transition);
+}
+.submit-btn:hover:not(:disabled){background:#a80001}
+.submit-btn:active:not(:disabled){transform:scale(.99)}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed}
+.submit-btn .btn-spinner{
+  display:none;
+  width:16px;height:16px;
+  border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+  margin-right:8px;
+  vertical-align:middle;
+}
+.submit-btn.loading .btn-spinner{display:inline-block}
+.submit-btn.loading .btn-text{display:none}
+.submit-btn.loading .btn-loading{display:inline}
+.btn-loading{display:none}
+
+/* ─── Results Panel ─────────────────────────────────────────────────────── */
+.results-panel{
+  background:var(--bg);
+  min-height:420px;
+}
+
+.empty-state{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:320px;
+  text-align:center;
+  padding:40px 24px;
+  gap:12px;
+}
+.empty-icon{
+  width:52px;height:52px;
+  border:1.5px solid var(--rule);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--ink3);
+  font-size:1.2rem;
+  font-family:var(--mono);
+  font-weight:700;
+}
+.empty-title{font-size:1rem;font-weight:600;color:var(--ink2)}
+.empty-body{font-size:.85rem;color:var(--ink3);max-width:260px;line-height:1.6}
+
+/* Results header */
+.results-header{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  margin-bottom:24px;
+  padding-bottom:12px;
+  border-bottom:1px solid var(--rule);
+  flex-wrap:wrap;
+  gap:8px;
+}
+.results-count{
+  font-size:2.2rem;
+  font-weight:800;
+  letter-spacing:-.04em;
+  color:var(--ink);
+  line-height:1;
+}
+.results-count-label{
+  font-size:.8rem;
+  color:var(--ink3);
+  margin-left:6px;
+  font-weight:400;
+}
+.results-meta{
+  font-family:var(--mono);
+  font-size:.68rem;
+  color:var(--ink3);
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+
+/* Tier headers */
+.tier-header{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:0 0 12px;
+}
+.tier-dot{
+  width:8px;height:8px;
+  border-radius:50%;
+  flex-shrink:0;
+}
+.tier-dot.likely{background:var(--green)}
+.tier-dot.check{background:var(--amber)}
+.tier-label{
+  font-family:var(--mono);
+  font-size:.7rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  font-weight:700;
+}
+.tier-label.likely{color:var(--green)}
+.tier-label.check{color:var(--amber)}
+.tier-count{
+  font-family:var(--mono);
+  font-size:.68rem;
+  color:var(--ink3);
+  margin-left:auto;
+}
+
+/* Scheme cards */
+.tier-block+.tier-block{margin-top:28px}
+.scheme-list{display:flex;flex-direction:column;gap:2px}
+.scheme-card{
+  background:var(--surface);
+  border:1px solid var(--rule);
+  border-radius:var(--radius);
+  overflow:hidden;
+  transition:border-color var(--transition);
+}
+.scheme-card:hover{border-color:var(--ink3)}
+.scheme-card.likely{border-top:2px solid var(--green)}
+.scheme-card.check{border-top:2px solid var(--amber)}
+
+.scheme-summary{
+  padding:14px 16px;
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  cursor:pointer;
+  list-style:none;
+  width:100%;
+}
+.scheme-summary::-webkit-details-marker{display:none}
+.scheme-name-block{flex:1;min-width:0}
+.scheme-name{
+  font-size:.95rem;
+  font-weight:700;
+  color:var(--ink);
+  line-height:1.3;
+}
+.scheme-agency{
+  font-size:.75rem;
+  color:var(--ink3);
+  margin-top:2px;
+  font-family:var(--mono);
+  letter-spacing:.03em;
+}
+.scheme-benefit-pill{
+  font-size:.75rem;
+  font-weight:600;
+  color:var(--green);
+  background:rgba(22,163,74,.12);
+  border:1px solid rgba(22,163,74,.25);
+  border-radius:3px;
+  padding:3px 8px;
+  white-space:nowrap;
+  line-height:1.4;
+  display:inline-block;
+  margin-top:6px;
+}
+.scheme-card.check .scheme-benefit-pill{
+  color:var(--amber);
+  background:rgba(217,119,6,.12);
+  border-color:rgba(217,119,6,.25);
+}
+
+.scheme-reason{
+  margin:8px 0 0;
+  padding:8px 12px;
+  background:rgba(217,119,6,.08);
+  border:1px solid rgba(217,119,6,.2);
+  border-radius:var(--radius);
+  font-size:.8rem;
+  color:var(--amber);
+  line-height:1.5;
+}
+.scheme-reason::before{
+  content:'▲ ';
+  font-size:.7em;
+  opacity:.7;
+}
+
+.scheme-body{
+  padding:0 16px 16px;
+  border-top:1px solid var(--rule);
+}
+.scheme-description{
+  font-size:.85rem;
+  color:var(--ink2);
+  line-height:1.6;
+  padding:12px 0 10px;
+}
+.docs-label{
+  font-family:var(--mono);
+  font-size:.65rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--ink3);
+  margin-bottom:7px;
+}
+.docs-list{
+  list-style:none;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  margin-bottom:14px;
+}
+.docs-list li{
+  font-size:.82rem;
+  color:var(--ink2);
+  padding-left:14px;
+  position:relative;
+  line-height:1.4;
+}
+.docs-list li::before{
+  content:'—';
+  position:absolute;
+  left:0;
+  color:var(--ink3);
+  font-size:.75rem;
+}
+.apply-link{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:.8rem;
+  font-weight:600;
+  color:var(--ink2);
+  text-decoration:none;
+  border:1px solid var(--rule);
+  border-radius:var(--radius);
+  padding:6px 12px;
+  letter-spacing:.02em;
+  transition:color var(--transition),border-color var(--transition);
+}
+.apply-link:hover{color:var(--ink);border-color:var(--ink3)}
+.apply-link svg{flex-shrink:0}
+
+/* Disclaimer */
+.disclaimer{
+  margin-top:24px;
+  padding-top:16px;
+  border-top:1px solid var(--rule);
+  font-size:.75rem;
+  color:var(--ink3);
+  line-height:1.6;
+  font-style:italic;
+}
+
+/* No matches */
+.no-match{
+  text-align:center;
+  padding:40px 16px;
+  color:var(--ink3);
+  font-size:.875rem;
+  line-height:1.7;
+}
+.no-match a{color:var(--ink2)}
+
+/* Error */
+.error-msg{
+  background:rgba(204,0,1,.1);
+  border:1px solid rgba(204,0,1,.3);
+  border-radius:var(--radius);
+  padding:12px 16px;
+  font-size:.85rem;
+  color:#ff7070;
+  line-height:1.5;
+}
+
+/* Details expand chevron */
+.scheme-toggle{
+  width:20px;height:20px;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--ink3);
+  flex-shrink:0;
+  transition:transform var(--transition),color var(--transition);
+  margin-top:2px;
+}
+details[open] .scheme-toggle{transform:rotate(180deg);color:var(--ink2)}
+
+/* Animations */
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.scheme-card{animation:fadein .22s ease-out both}
+.scheme-card:nth-child(2){animation-delay:.04s}
+.scheme-card:nth-child(3){animation-delay:.08s}
+.scheme-card:nth-child(4){animation-delay:.12s}
+.scheme-card:nth-child(5){animation-delay:.16s}
+
+/* Focus visible */
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--rule);border-radius:3px}
 </style>
 </head>
 <body>
-<header>
-  <h1>Bantuan Checker</h1>
-  <p>Find Malaysian government assistance you may qualify for, in 30 seconds.</p>
-</header>
-<main>
-  <form class="card" id="f">
-    <label>Age</label><input name="age" type="number" min="0" max="120" value="22" required>
-    <label>State</label>
-    <select name="state">
-      <option>Selangor</option><option>Kuala Lumpur</option><option>Johor</option><option>Penang</option><option>Perak</option><option>Kedah</option><option>Kelantan</option><option>Terengganu</option><option>Pahang</option><option>Negeri Sembilan</option><option>Melaka</option><option>Perlis</option><option>Sabah</option><option>Sarawak</option><option>Putrajaya</option><option>Labuan</option>
-    </select>
-    <label>Monthly household income (RM)</label><input name="household_income" type="number" min="0" step="50" value="2000" required>
-    <label>Household size</label><input name="household_size" type="number" min="1" value="4">
-    <label>Children under 18</label><input name="children_under_18" type="number" min="0" value="0">
-    <label>Marital status</label>
-    <select name="marital_status"><option value="single">Single</option><option value="married">Married</option><option value="widowed">Widowed</option><option value="divorced">Divorced</option></select>
-    <label>Occupation</label>
-    <select name="occupation"><option value="student">Student</option><option value="working" selected>Working</option><option value="unemployed">Unemployed</option><option value="retired">Retired</option></select>
-    <label>Religion (optional, for zakat)</label>
-    <select name="religion"><option value="">Prefer not to say</option><option value="islam">Islam</option><option value="other">Other</option></select>
-    <label><input type="checkbox" name="has_ptptn" style="width:auto"> I have a PTPTN loan</label>
-    <button id="go">Check eligibility</button>
-  </form>
 
-  <section class="card" id="out">
-    <div class="empty">Fill in the form and click <b>Check eligibility</b>.</div>
-  </section>
-</main>
+<header class="page-header">
+  <div class="header-inner">
+    <div>
+      <div class="logo-mark">MY · Bantuan</div>
+      <h1 class="site-title">Bantuan Checker</h1>
+      <p class="site-sub">Enter your profile and see which Malaysian government aid schemes you may qualify for — instantly.</p>
+      <span class="version-badge">Indicative only</span>
+    </div>
+  </div>
+</header>
+
+<div class="workspace">
+
+  <!-- ── Form Panel ── -->
+  <div class="panel form-panel">
+    <div class="panel-label">Your profile</div>
+
+    <form id="f" autocomplete="off">
+
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label" for="age">Age</label>
+          <input id="age" name="age" type="number" min="0" max="120" value="22" required>
+        </div>
+        <div class="field">
+          <label class="field-label" for="household_income">Monthly Income (RM)</label>
+          <input id="household_income" name="household_income" type="number" min="0" step="50" value="2000" required>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label" for="household_size">Household Size</label>
+          <input id="household_size" name="household_size" type="number" min="1" value="4">
+        </div>
+        <div class="field">
+          <label class="field-label" for="children_under_18">Children &lt;18</label>
+          <input id="children_under_18" name="children_under_18" type="number" min="0" value="0">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="state">State</label>
+        <select id="state" name="state">
+          <option>Selangor</option><option>Kuala Lumpur</option><option>Johor</option>
+          <option>Penang</option><option>Perak</option><option>Kedah</option>
+          <option>Kelantan</option><option>Terengganu</option><option>Pahang</option>
+          <option>Negeri Sembilan</option><option>Melaka</option><option>Perlis</option>
+          <option>Sabah</option><option>Sarawak</option><option>Putrajaya</option>
+          <option>Labuan</option>
+        </select>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label" for="marital_status">Marital Status</label>
+          <select id="marital_status" name="marital_status">
+            <option value="single">Single</option>
+            <option value="married">Married</option>
+            <option value="widowed">Widowed</option>
+            <option value="divorced">Divorced</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label" for="occupation">Occupation</label>
+          <select id="occupation" name="occupation">
+            <option value="student">Student</option>
+            <option value="working" selected>Working</option>
+            <option value="unemployed">Unemployed</option>
+            <option value="retired">Retired</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="religion">Religion <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink3)">(optional · for Zakat)</span></label>
+        <select id="religion" name="religion">
+          <option value="">Prefer not to say</option>
+          <option value="islam">Islam</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label class="checkbox-row">
+          <input type="checkbox" name="has_ptptn"> I have a PTPTN loan
+        </label>
+      </div>
+
+      <button class="submit-btn" id="go" type="submit">
+        <span class="btn-spinner" aria-hidden="true"></span>
+        <span class="btn-text">Check eligibility →</span>
+        <span class="btn-loading" aria-live="polite">Checking…</span>
+      </button>
+
+    </form>
+  </div>
+
+  <!-- ── Results Panel ── -->
+  <div class="panel results-panel" id="out">
+    <div class="empty-state" id="empty">
+      <div class="empty-icon">?</div>
+      <div class="empty-title">No results yet</div>
+      <div class="empty-body">Fill in your profile on the left and tap <strong>Check eligibility</strong>.</div>
+    </div>
+  </div>
+
+</div>
+
 <script>
-const f=document.getElementById('f'),out=document.getElementById('out'),go=document.getElementById('go');
-f.addEventListener('submit',async e=>{
-  e.preventDefault();go.disabled=true;go.textContent='Checking…';
-  const d=Object.fromEntries(new FormData(f).entries());
-  const body={age:+d.age,state:d.state,household_income:+d.household_income,household_size:+d.household_size||1,
-    children_under_18:+d.children_under_18||0,marital_status:d.marital_status,occupation:d.occupation,
-    religion:d.religion||null,has_ptptn:!!d.has_ptptn};
-  try{
-    const r=await fetch('/api/check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-    if(!r.ok) throw new Error(await r.text());
-    render(await r.json());
-  }catch(err){out.innerHTML='<div class="empty">Error: '+err.message+'</div>';}
-  go.disabled=false;go.textContent='Check eligibility';
-});
-function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
-function schemeCard(s,tier){
-  const reasonHtml=tier==='check'?`<div class="reason">⚠️ ${esc(s.reason)}</div>`:'';
-  return `<div class="scheme ${tier}">
-    <h3>${esc(s.name)}</h3><div class="agency">${esc(s.agency)}</div>
-    <div class="benefit">${esc(s.benefit)}</div>
-    ${reasonHtml}
-    <div class="muted">${esc(s.summary)}</div>
-    <ul>${s.documents.map(d=>'<li>'+esc(d)+'</li>').join('')}</ul>
-    <a href="${esc(s.url)}" target="_blank" rel="noopener">Apply / learn more →</a>
-  </div>`;
+const f   = document.getElementById('f');
+const out = document.getElementById('out');
+const go  = document.getElementById('go');
+
+function esc(s){
+  return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 }
+
+function chevronSvg(){
+  return `<svg class="scheme-toggle" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+    <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+}
+
+function arrowSvg(){
+  return `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+    <path d="M2.5 9.5l7-7M3 2.5h6.5V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+}
+
+function schemeCard(s, tier){
+  const isCheck = tier === 'check';
+  const reasonHtml = isCheck
+    ? `<div class="scheme-reason">Almost: ${esc(s.reason)}</div>`
+    : '';
+  const docs = s.documents.map(d => `<li>${esc(d)}</li>`).join('');
+  return `
+<details class="scheme-card ${esc(tier)}">
+  <summary class="scheme-summary">
+    <div class="scheme-name-block">
+      <div class="scheme-name">${esc(s.name)}</div>
+      <div class="scheme-agency">${esc(s.agency)}</div>
+      <span class="scheme-benefit-pill">${esc(s.benefit)}</span>
+      ${reasonHtml}
+    </div>
+    ${chevronSvg()}
+  </summary>
+  <div class="scheme-body">
+    <div class="scheme-description">${esc(s.summary)}</div>
+    <div class="docs-label">Documents needed</div>
+    <ul class="docs-list">${docs}</ul>
+    <a class="apply-link" href="${esc(s.url)}" target="_blank" rel="noopener">
+      Apply / learn more ${arrowSvg()}
+    </a>
+  </div>
+</details>`;
+}
+
 function render(res){
-  const total=res.likely.length+res.check.length;
-  if(!total){out.innerHTML='<div class="empty">No schemes matched. Try adjusting the details, or check <a href="https://www.malaysia.gov.my">malaysia.gov.my</a>.</div>';return;}
-  let h=`<div class="count">${total}</div><div class="muted" style="margin-bottom:16px">scheme(s) found for your profile</div>`;
+  const total = res.likely.length + res.check.length;
+
+  if(!total){
+    out.innerHTML = `<div class="no-match">
+      No schemes matched your profile.<br>
+      Try adjusting your details, or visit
+      <a href="https://www.malaysia.gov.my" target="_blank" rel="noopener">malaysia.gov.my</a>
+      for a full listing.
+    </div>`;
+    return;
+  }
+
+  const stamp = new Date().toLocaleTimeString('en-MY',{hour:'2-digit',minute:'2-digit'});
+  let h = `<div class="results-header">
+    <div>
+      <span class="results-count">${total}</span>
+      <span class="results-count-label">scheme${total!==1?'s':''} found</span>
+    </div>
+    <div class="results-meta">Assessed ${stamp}</div>
+  </div>`;
+
   if(res.likely.length){
-    h+=`<div class="section-head likely">✅ Likely Eligible (${res.likely.length})</div>`;
-    for(const s of res.likely) h+=schemeCard(s,'likely');
+    h += `<div class="tier-block">
+      <div class="tier-header">
+        <span class="tier-dot likely"></span>
+        <span class="tier-label likely">Likely Eligible</span>
+        <span class="tier-count">${res.likely.length} scheme${res.likely.length!==1?'s':''}</span>
+      </div>
+      <div class="scheme-list">`;
+    for(const s of res.likely) h += schemeCard(s, 'likely');
+    h += `</div></div>`;
   }
+
   if(res.check.length){
-    h+=`<div class="section-head check" style="margin-top:${res.likely.length?'16px':'0'}">🔍 Check Eligibility — Almost There (${res.check.length})</div>`;
-    for(const s of res.check) h+=schemeCard(s,'check');
+    h += `<div class="tier-block">
+      <div class="tier-header">
+        <span class="tier-dot check"></span>
+        <span class="tier-label check">Check Eligibility</span>
+        <span class="tier-count">${res.check.length} scheme${res.check.length!==1?'s':''}</span>
+      </div>
+      <div class="scheme-list">`;
+    for(const s of res.check) h += schemeCard(s, 'check');
+    h += `</div></div>`;
   }
-  h+=`<p class="muted" style="margin-top:14px">${esc(res.disclaimer)}</p>`;
-  out.innerHTML=h;
+
+  h += `<p class="disclaimer">${esc(res.disclaimer)}</p>`;
+  out.innerHTML = h;
 }
+
+f.addEventListener('submit', async e => {
+  e.preventDefault();
+  go.disabled = true;
+  go.classList.add('loading');
+
+  const d = Object.fromEntries(new FormData(f).entries());
+  const body = {
+    age:              +d.age,
+    state:            d.state,
+    household_income: +d.household_income,
+    household_size:   +d.household_size || 1,
+    children_under_18: +d.children_under_18 || 0,
+    marital_status:   d.marital_status,
+    occupation:       d.occupation,
+    religion:         d.religion || null,
+    has_ptptn:        !!d.has_ptptn,
+  };
+
+  try{
+    const r = await fetch('/api/check', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(body),
+    });
+    if(!r.ok) throw new Error(`Server error ${r.status}: ${await r.text()}`);
+    render(await r.json());
+  } catch(err){
+    out.innerHTML = `<div class="error-msg">
+      <strong>Error:</strong> ${esc(err.message)}<br>
+      <span style="opacity:.7">Check the server is running and try again.</span>
+    </div>`;
+  }
+
+  go.disabled = false;
+  go.classList.remove('loading');
+});
 </script>
 </body>
 </html>
