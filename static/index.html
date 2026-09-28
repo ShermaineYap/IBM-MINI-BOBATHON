@@ -541,6 +541,13 @@ details[open] .scheme-toggle{transform:rotate(180deg);color:var(--ink2)}
 .scheme-card.check .scheme-icon{background:rgba(217,119,6,.12);color:var(--amber)}
 .scheme-icon svg{width:22px;height:22px}
 .empty-art{width:180px;height:auto;margin-bottom:4px}
+
+/* ─── Mobile fixes ──────────────────────────────────────────────────────── */
+.workspace{grid-template-columns:minmax(0,1fr)}
+@media(min-width:840px){.workspace{grid-template-columns:380px minmax(0,1fr)}}
+@media(max-width:839px){.form-panel{position:static}}
+.scheme-benefit-pill{white-space:normal;max-width:100%}
+.scheme-reason{max-width:100%;overflow-wrap:anywhere}
 </style>
 </head>
 <body>

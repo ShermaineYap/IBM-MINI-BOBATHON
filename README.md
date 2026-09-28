@@ -4,6 +4,16 @@
 
 Built in 40 minutes at *Build with IBM Bob + Mini Bob-a-thon* (IBM × Tec D × Developer Kaki, 28 Sep 2026) by Shermaine Yap.
 
+## Screenshots
+
+**Results: two-tier eligibility** (a married 35-year-old, RM2,600/month income, 2 children)
+
+![Results view](docs/screenshots/2-results.png)
+
+| Home (before checking) | "Check Eligibility" card expanded | Mobile |
+|---|---|---|
+| ![Home](docs/screenshots/1-home.png) | ![Expanded near-miss card with reason, documents and apply link](docs/screenshots/3-check-card-expanded.png) | ![Mobile view](docs/screenshots/4-mobile.png) |
+
 ## The problem
 
 Malaysia runs dozens of assistance schemes (STR, SARA, eBelia Rahmah, JKM allowances, MADANI Medical, eKasih, zakat, PTPTN relief…) across different agencies, each with its own portal and its own income/age rules. Many eligible people — especially seniors, students and B40 families — never apply because they don't know a scheme exists or which documents to bring. Money that is budgeted goes unclaimed.
