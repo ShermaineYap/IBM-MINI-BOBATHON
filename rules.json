@@ -1,0 +1,118 @@
+{
+  "version": "2026-09-28",
+  "disclaimer": "Indicative eligibility only. Criteria are simplified and may change; always confirm on the official portal before applying.",
+  "schemes": [
+    {
+      "id": "str",
+      "name": "Sumbangan Tunai Rahmah (STR)",
+      "agency": "LHDN / Ministry of Finance",
+      "summary": "Cash assistance for low-income households, senior citizens and singles.",
+      "benefit": "Up to RM2,500/year for households; RM600/year for singles (tiered by income)",
+      "url": "https://bantuantunai.hasil.gov.my",
+      "any_of": [
+        {"all_of": [{"field": "marital_status", "in": ["married"]}, {"field": "household_income", "lte": 5000}]},
+        {"all_of": [{"field": "age", "gte": 21}, {"field": "marital_status", "in": ["single"]}, {"field": "household_income", "lte": 2500}]},
+        {"all_of": [{"field": "age", "gte": 60}, {"field": "household_income", "lte": 5000}]}
+      ],
+      "documents": ["MyKad", "Bank account number", "Spouse's MyKad (if married)", "Latest payslip or income declaration"]
+    },
+    {
+      "id": "sara",
+      "name": "Sumbangan Asas Rahmah (SARA)",
+      "agency": "Ministry of Finance",
+      "summary": "Monthly MyKad credit for basic necessities at participating stores.",
+      "benefit": "Monthly credit on MyKad for essentials (rice, eggs, medicine, etc.)",
+      "url": "https://bantuantunai.hasil.gov.my",
+      "any_of": [
+        {"all_of": [{"field": "age", "gte": 21}, {"field": "household_income", "lte": 5000}]}
+      ],
+      "documents": ["MyKad (must be valid and active)", "STR registration"]
+    },
+    {
+      "id": "ebelia",
+      "name": "eBelia Rahmah",
+      "agency": "Ministry of Finance",
+      "summary": "One-off e-wallet credit for youths and full-time students.",
+      "benefit": "RM200 e-wallet credit",
+      "url": "https://ebeliarahmah.gov.my",
+      "any_of": [
+        {"all_of": [{"field": "age", "gte": 18}, {"field": "age", "lte": 20}]},
+        {"all_of": [{"field": "age", "gte": 21}, {"field": "occupation", "in": ["student"]}]}
+      ],
+      "documents": ["MyKad", "Student ID / confirmation letter (if 21+)", "A participating e-wallet account"]
+    },
+    {
+      "id": "jkm_warga_emas",
+      "name": "Bantuan Warga Emas (JKM)",
+      "agency": "Jabatan Kebajikan Masyarakat",
+      "summary": "Monthly allowance for low-income senior citizens without family support.",
+      "benefit": "RM500/month",
+      "url": "https://www.jkm.gov.my",
+      "any_of": [
+        {"all_of": [{"field": "age", "gte": 60}, {"field": "household_income", "lte": 1500}]}
+      ],
+      "documents": ["MyKad", "Proof of income (or declaration of no income)", "Utility bill as proof of address", "Bank account details"]
+    },
+    {
+      "id": "jkm_kanak",
+      "name": "Bantuan Kanak-Kanak (JKM)",
+      "agency": "Jabatan Kebajikan Masyarakat",
+      "summary": "Monthly support for low-income families with children under 18.",
+      "benefit": "RM150-RM200 per child, up to RM1,000/month",
+      "url": "https://www.jkm.gov.my",
+      "any_of": [
+        {"all_of": [{"field": "children_under_18", "gte": 1}, {"field": "household_income", "lte": 2500}]}
+      ],
+      "documents": ["Parent MyKad", "Children's birth certificates", "Proof of income", "Bank account details"]
+    },
+    {
+      "id": "madani_medical",
+      "name": "Skim Perubatan MADANI",
+      "agency": "Ministry of Health",
+      "summary": "Free basic outpatient treatment at participating private GP clinics for B40.",
+      "benefit": "Up to RM60 per visit at panel clinics",
+      "url": "https://spm.moh.gov.my",
+      "any_of": [
+        {"all_of": [{"field": "household_income", "lte": 2500}]},
+        {"all_of": [{"field": "age", "gte": 60}, {"field": "household_income", "lte": 5000}]}
+      ],
+      "documents": ["MyKad", "eKasih registration (if any)"]
+    },
+    {
+      "id": "ekasih",
+      "name": "eKasih / MyKasih",
+      "agency": "ICU JPM",
+      "summary": "National poverty database that unlocks food aid and other targeted assistance.",
+      "benefit": "Monthly food aid credit and priority for other schemes",
+      "url": "https://ekasih.icu.gov.my",
+      "any_of": [
+        {"all_of": [{"field": "household_income", "lte": 2589}]}
+      ],
+      "documents": ["MyKad", "Household members' documents", "Proof of income"]
+    },
+    {
+      "id": "zakat",
+      "name": "Bantuan Zakat (Asnaf)",
+      "agency": "State Zakat Board (e.g. LZS, PPZ-MAIWP)",
+      "summary": "Monthly or one-off aid for Muslims below the state 'had kifayah' threshold.",
+      "benefit": "Varies by state: monthly cash, education, medical and housing aid",
+      "url": "https://www.zakatselangor.com.my",
+      "any_of": [
+        {"all_of": [{"field": "religion", "in": ["islam"]}, {"field": "household_income", "lte": 3000}]}
+      ],
+      "documents": ["MyKad", "Proof of income", "Utility bills", "Marriage certificate (if applicable)"]
+    },
+    {
+      "id": "ptptn_ujrah",
+      "name": "PTPTN Repayment Assistance",
+      "agency": "PTPTN",
+      "summary": "Repayment discounts and exemption for first-class graduates from low-income families.",
+      "benefit": "Repayment discounts; full exemption for eligible first-class graduates",
+      "url": "https://www.ptptn.gov.my",
+      "any_of": [
+        {"all_of": [{"field": "has_ptptn", "eq": true}, {"field": "household_income", "lte": 5000}]}
+      ],
+      "documents": ["MyKad", "PTPTN loan account", "Degree scroll / transcript (for exemption)"]
+    }
+  ]
+}

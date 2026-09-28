@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bantuan Checker</title>
+<style>
+  :root{--bg:#f4f6fb;--card:#fff;--ink:#1a1f36;--muted:#5b6478;--brand:#0f62fe;--ok:#198038;--warn:#b45309;--line:#e0e4ee}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+  header{background:var(--brand);color:#fff;padding:20px 16px}
+  header h1{margin:0;font-size:1.4rem}
+  header p{margin:4px 0 0;opacity:.9;font-size:.9rem}
+  main{max-width:960px;margin:0 auto;padding:16px;display:grid;gap:16px;grid-template-columns:1fr}
+  @media(min-width:800px){main{grid-template-columns:360px 1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+  label{display:block;font-size:.85rem;color:var(--muted);margin:10px 0 4px}
+  input,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;font-size:1rem}
+  button{margin-top:16px;width:100%;padding:12px;border:0;border-radius:8px;background:var(--brand);color:#fff;font-size:1rem;font-weight:600;cursor:pointer}
+  button:disabled{opacity:.6}
+  .section-head{font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:0 0 10px;padding:6px 10px;border-radius:6px}
+  .section-head.likely{color:var(--ok);background:#f0faf3}
+  .section-head.check{color:var(--warn);background:#fffbf0}
+  .scheme{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:12px}
+  .scheme.likely{border-left:4px solid var(--ok)}
+  .scheme.check{border-left:4px solid var(--warn)}
+  .scheme h3{margin:0 0 2px;font-size:1.05rem}
+  .scheme .agency{color:var(--muted);font-size:.8rem}
+  .scheme .benefit{font-weight:600;color:var(--ok);margin:6px 0}
+  .scheme .reason{font-size:.85rem;color:var(--warn);margin:6px 0;padding:6px 10px;background:#fffbf0;border-radius:6px}
+  .scheme ul{margin:6px 0 0;padding-left:18px;font-size:.9rem}
+  .scheme a{color:var(--brand);font-size:.85rem}
+  .muted{color:var(--muted);font-size:.85rem}
+  .empty{padding:40px 12px;text-align:center;color:var(--muted)}
+  .count{font-size:1.6rem;font-weight:700;color:var(--ok)}
+  details{margin-top:12px}
+  summary{cursor:pointer;color:var(--muted);font-size:.85rem}
+</style>
+</head>
+<body>
+<header>
+  <h1>Bantuan Checker</h1>
+  <p>Find Malaysian government assistance you may qualify for, in 30 seconds.</p>
+</header>
+<main>
+  <form class="card" id="f">
+    <label>Age</label><input name="age" type="number" min="0" max="120" value="22" required>
+    <label>State</label>
+    <select name="state">
+      <option>Selangor</option><option>Kuala Lumpur</option><option>Johor</option><option>Penang</option><option>Perak</option><option>Kedah</option><option>Kelantan</option><option>Terengganu</option><option>Pahang</option><option>Negeri Sembilan</option><option>Melaka</option><option>Perlis</option><option>Sabah</option><option>Sarawak</option><option>Putrajaya</option><option>Labuan</option>
+    </select>
+    <label>Monthly household income (RM)</label><input name="household_income" type="number" min="0" step="50" value="2000" required>
+    <label>Household size</label><input name="household_size" type="number" min="1" value="4">
+    <label>Children under 18</label><input name="children_under_18" type="number" min="0" value="0">
+    <label>Marital status</label>
+    <select name="marital_status"><option value="single">Single</option><option value="married">Married</option><option value="widowed">Widowed</option><option value="divorced">Divorced</option></select>
+    <label>Occupation</label>
+    <select name="occupation"><option value="student">Student</option><option value="working" selected>Working</option><option value="unemployed">Unemployed</option><option value="retired">Retired</option></select>
+    <label>Religion (optional, for zakat)</label>
+    <select name="religion"><option value="">Prefer not to say</option><option value="islam">Islam</option><option value="other">Other</option></select>
+    <label><input type="checkbox" name="has_ptptn" style="width:auto"> I have a PTPTN loan</label>
+    <button id="go">Check eligibility</button>
+  </form>
+
+  <section class="card" id="out">
+    <div class="empty">Fill in the form and click <b>Check eligibility</b>.</div>
+  </section>
+</main>
+<script>
+const f=document.getElementById('f'),out=document.getElementById('out'),go=document.getElementById('go');
+f.addEventListener('submit',async e=>{
+  e.preventDefault();go.disabled=true;go.textContent='Checking…';
+  const d=Object.fromEntries(new FormData(f).entries());
+  const body={age:+d.age,state:d.state,household_income:+d.household_income,household_size:+d.household_size||1,
+    children_under_18:+d.children_under_18||0,marital_status:d.marital_status,occupation:d.occupation,
+    religion:d.religion||null,has_ptptn:!!d.has_ptptn};
+  try{
+    const r=await fetch('/api/check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(!r.ok) throw new Error(await r.text());
+    render(await r.json());
+  }catch(err){out.innerHTML='<div class="empty">Error: '+err.message+'</div>';}
+  go.disabled=false;go.textContent='Check eligibility';
+});
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function schemeCard(s,tier){
+  const reasonHtml=tier==='check'?`<div class="reason">⚠️ ${esc(s.reason)}</div>`:'';
+  return `<div class="scheme ${tier}">
+    <h3>${esc(s.name)}</h3><div class="agency">${esc(s.agency)}</div>
+    <div class="benefit">${esc(s.benefit)}</div>
+    ${reasonHtml}
+    <div class="muted">${esc(s.summary)}</div>
+    <ul>${s.documents.map(d=>'<li>'+esc(d)+'</li>').join('')}</ul>
+    <a href="${esc(s.url)}" target="_blank" rel="noopener">Apply / learn more →</a>
+  </div>`;
+}
+function render(res){
+  const total=res.likely.length+res.check.length;
+  if(!total){out.innerHTML='<div class="empty">No schemes matched. Try adjusting the details, or check <a href="https://www.malaysia.gov.my">malaysia.gov.my</a>.</div>';return;}
+  let h=`<div class="count">${total}</div><div class="muted" style="margin-bottom:16px">scheme(s) found for your profile</div>`;
+  if(res.likely.length){
+    h+=`<div class="section-head likely">✅ Likely Eligible (${res.likely.length})</div>`;
+    for(const s of res.likely) h+=schemeCard(s,'likely');
+  }
+  if(res.check.length){
+    h+=`<div class="section-head check" style="margin-top:${res.likely.length?'16px':'0'}">🔍 Check Eligibility — Almost There (${res.check.length})</div>`;
+    for(const s of res.check) h+=schemeCard(s,'check');
+  }
+  h+=`<p class="muted" style="margin-top:14px">${esc(res.disclaimer)}</p>`;
+  out.innerHTML=h;
+}
+</script>
+</body>
+</html>
